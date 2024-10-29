@@ -1,7 +1,7 @@
 # Orange数独
 
 一个现代化的网页版数独游戏，具有丰富的功能和优雅的界面设计。
-[点击这里](https://alongor666.github.io/Sudoku-2-ZJC/)在浏览器中运行游戏。
+[点击这里](https://alongor666.github.io/-Or/)在浏览器中运行游戏。
 
 ## 功能特点
 
