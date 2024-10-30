@@ -61,7 +61,7 @@
             gap: 20px;
             margin: 20px 0;
             font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         /* 模式按钮样式 */
@@ -76,7 +76,7 @@
             background-color: var(--disabled-color);
             color: black;
             font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .mode-btn.active {
@@ -86,7 +86,7 @@
 
         /* 计时器和得分显示 */
         .timer-score {
-            font-size: 24px;
+            font-size: 20px;
             color: var(--text-dark);
             font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
         }
@@ -149,24 +149,24 @@
 
         /* 修改这个样式规则，只突出九宫格外边框 */
         .cell:nth-child(3n):not(:nth-child(9n)) {
-            border-right: 1px solid rgba(97, 95, 95, 0.863);
+            border-right: 1px solid rgba(2, 2, 2, 0.863);
         }
 
         .cell:nth-child(n+19):nth-child(-n+27),
         .cell:nth-child(n+46):nth-child(-n+54) {
-            border-bottom: 1px solid rgba(97, 95, 95, 0.863);
+            border-bottom: 1px solid rgba(2, 2, 2, 0.863);
         }
 
         /* 确保最右列和最下行的边框也是黑色 */
         .cell:nth-child(9n) {
-            border-right: 1px solid rgba(97, 95, 95, 0.863);
+            border-right: 1px solid rgba(2, 2, 2, 0.863);
         }
 
         .cell:nth-child(n+73):nth-child(-n+81) {
-            border-bottom: 1px solid rgba(97, 95, 95, 0.863);
+            border-bottom: 1px solid rgba(2, 2, 2, 0.863);
         }
 
-        /* 添加这个规则来确保网格的外边框是黑色的 */
+        /* 添加这个规则来确保网格的外边框是色的 */
         .grid {
             border: 1px solid rgba(97, 95, 95, 0.863);
         }
@@ -216,7 +216,7 @@
             font-weight: bold;
             transition: all 0.3s ease;
             font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         /* 添加这个新的样式规则 */
@@ -244,7 +244,7 @@
             font-weight: bold;
             transition: all 0.3s ease;
             font-family: "Microsoft YaHei", system-ui, -apple-system, sans-serif;
-            font-size: 24px;
+            font-size: 20px;
         }
 
         .control-btn.active {
@@ -298,14 +298,15 @@
         }
 
         .number-btn.selected {
-            background-color: var(--secondary-color);
+            background-color: var(--primary-color);
             color: white;
+            box-shadow: 0 0 0 2px white, 0 0 0 4px var(--primary-color);
         }
 
-        /* 高亮数字键盘按钮 */
         .number-btn.highlighted {
-            background-color: var(--secondary-color);
-            color: white;
+            background-color: var(--related-color);
+            color: var(--primary-color);
+            border: 2px solid var(--primary-color);
         }
 
         /* 剩余数量显示 */
@@ -369,30 +370,53 @@
 
         /* 响应式设计 */
         @media (max-width: 768px) {
+            body {
+                padding: 10px;
+            }
+
+            .game-container {
+                width: 95%;
+                max-width: 95%;
+            }
+
+            .sudoku-board {
+                width: 95%;
+                padding: 5px;
+            }
+
             .grid {
-                grid-template-columns: repeat(9, 40px);
-                grid-template-rows: repeat(9, 40px);
+                grid-template-columns: repeat(9, 1fr);
+                grid-template-rows: repeat(9, 1fr);
+                gap: 0;
+                width: 100%;
             }
 
             .cell {
-                font-size: 28px;
-                width: 40px;
-                height: 40px;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+                font-size: 24px;
+            }
+
+            .number-pad {
+                width: 100%;
             }
 
             .number-btn {
-                width: 40px;
-                height: 40px;
-                font-size: 28px;
+                width: 100%;
+                height: auto;
+                aspect-ratio: 1 / 1;
+                font-size: 24px;
+            }
+
+            .controls {
+                width: 95%;
             }
 
             .control-btn, .mode-control-btn {
-                font-size: 28px;
+                width: 100%;
                 padding: 12px 16px;
-            }
-
-            .remaining-count {
-                font-size: 18px;
+                font-size: 20px;
             }
         }
     </style>
@@ -431,8 +455,8 @@
             <button class="control-btn enabled" id="showSame">显示相同数字</button>
             <button class="control-btn enabled" id="showRelated">显示相关网格</button>
             <button class="control-btn enabled" id="autoCheck">自动检查</button>
-            <button class="control-btn enabled" id="clearGrid">清空网格</button>
-            <button class="control-btn enabled" id="submitPuzzle">提交谜题</button>
+            <button class="control-btn enabled" id="clearGrid" style="display: none">清空网格</button>
+            <button class="control-btn enabled" id="submitPuzzle" style="display: none">提交谜题</button>
         </div>
     </div>
     <!-- 难度选择模态框 -->
@@ -542,7 +566,7 @@
                 }
             }
 
-            /* 添加事件监听器 */
+            /* 添事件监听器 */
             addEventListeners() {
                 // 单元格点击事件
                 this.grid.addEventListener('click', this.onCellClick.bind(this));
@@ -726,6 +750,29 @@
                 if (this.showSame) {
                     this.highlightSameNumbers(number);
                 }
+
+                // 在成功填入数字后
+                if (this.fillMode) {
+                    // 更新余数
+                    this.updateRemainingCount(number);
+                    
+                    // 检查余数是否为0
+                    const remainingCount = parseInt(this.numberPad.querySelector(`.number-btn[data-number='${number}'] .remaining-count`).textContent);
+                    if (remainingCount === 0) {
+                        // 获取下一个可用数字
+                        const nextNumber = this.getNextAvailableNumber(number);
+                        if (nextNumber) {
+                            // 更新选中的数字
+                            this.selectedNumber = nextNumber;
+                            // 更新数字键盘高亮
+                            this.highlightNumberButton(nextNumber);
+                            // 更新数独板上的高亮
+                            if (this.showSame) {
+                                this.highlightSameNumbers(nextNumber);
+                            }
+                        }
+                    }
+                }
             }
 
             /* 删除数字 */
@@ -845,6 +892,11 @@
             toggleEditMode() {
                 this.editMode = !this.editMode;
                 this.editModeBtn.classList.toggle('active', this.editMode);
+                
+                // 显示/隐藏清空网格和提交谜题按钮
+                this.clearGridBtn.style.display = this.editMode ? 'block' : 'none';
+                this.submitPuzzleBtn.style.display = this.editMode ? 'block' : 'none';
+                
                 if (this.editMode) {
                     this.editModeBtn.textContent = '编辑模式 (on)';
                     this.clearGrid();
@@ -954,7 +1006,7 @@
                     this.showRelated = previousSettings.showRelated;
                     this.autoCheck = previousSettings.autoCheck;
 
-                    // 更新按钮状态以反映设置
+                    // 更新按钮状态以反映置
                     [
                         [this.showSameBtn, this.showSame],
                         [this.showRelatedBtn, this.showRelated],
@@ -1070,7 +1122,7 @@
                 return this.isValidMoveForBoard(this.board, index, num);
             }
 
-            /* 检查数字是否可放置（指定棋盘） */
+            /* 检查数字是否可放置（指棋盘） */
             isValidMoveForBoard(board, index, num) {
                 const row = Math.floor(index / 9);
                 const col = index % 9;
@@ -1382,7 +1434,22 @@
             fillNumber(number) {
                 // 检查剩余数量
                 const remainingCount = parseInt(this.numberPad.querySelector(`.number-btn[data-number='${number}'] .remaining-count`).textContent);
-                if (remainingCount <= 0) return; // 如果剩余数量为0，直接返回
+                
+                if (remainingCount <= 0) {
+                    // 获取下一个可用数字
+                    const nextNumber = this.getNextAvailableNumber(number);
+                    if (nextNumber) {
+                        // 更新选中的数字
+                        this.selectedNumber = nextNumber;
+                        // 更新数字键盘高亮
+                        this.highlightNumberButton(nextNumber);
+                        // 更新数独板上的高亮
+                        if (this.showSame) {
+                            this.highlightSameNumbers(nextNumber);
+                        }
+                    }
+                    return;
+                }
 
                 if (!this.selectedCell || this.selectedCell.classList.contains('fixed')) return;
 
@@ -1406,6 +1473,31 @@
             updateScore() {
                 this.score = Math.max(0, this.score); // 确保得分不为负
                 this.scoreElement.textContent = this.score;
+            }
+
+            /* 添加新的辅助方法来获取下一个可用数字 */
+            getNextAvailableNumber(currentNumber) {
+                const remainingCounts = Array.from(this.numberPad.querySelectorAll('.number-btn'))
+                    .map(btn => ({
+                        number: parseInt(btn.dataset.number),
+                        count: parseInt(btn.querySelector('.remaining-count').textContent)
+                    }))
+                    .filter(item => item.count > 0);
+                
+                if (remainingCounts.length === 0) return null;
+                
+                // 按照余数升序排序
+                remainingCounts.sort((a, b) => a.count - b.count);
+                
+                // 找到当前数字右侧的第一个可用数字
+                const currentIndex = remainingCounts.findIndex(item => item.number === currentNumber);
+                if (currentIndex === -1) {
+                    // 如果当前数字不在可用数字中，返回余数最少的数字
+                    return remainingCounts[0].number;
+                }
+                
+                // 返回当前数字右侧的第一个数字，如果没有则返回第一个数字
+                return remainingCounts[(currentIndex + 1) % remainingCounts.length].number;
             }
         }
 
